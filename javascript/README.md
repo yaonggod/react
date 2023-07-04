@@ -138,13 +138,13 @@ console.log(age); // undefined
 
 원시형(기본형) : number, string, boolean, 값을 복사
 
-## 배열 함수
+## 함수
 
 `filter()` 조건에 해당하는 값만 골라서 배열에 넣음
 
 `sort()` 정렬
 
-`map()` 원소마다 함수를 적용한 값을 반
+`map()` 원소마다 함수를 적용한 값을 반영 
 
 `find()`
 
