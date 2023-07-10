@@ -34,7 +34,7 @@ npm install
 
 컴포넌트
 
-```javascript
+```react
 function App() {
   return (
     <div>
@@ -52,7 +52,7 @@ export default App;
 
 프로젝트 시작 시 가장 먼저 실행되는 파일
 
-```javascript
+```react
 // 리액트 요소를 브라우저에 렌더링하는 데 필요한 라이브러리
 import ReactDOM from 'react-dom/client';
 
@@ -75,17 +75,27 @@ root.render(<App />);
 
 선언형 접근 방식
 
-```javascript
+```react
 function App() {
   return (
     <div>
       <h2>Let's get started!</h2>
+      <Expenses items={expenses}/>
     </div>
   );
 }
-
-export default App;
 ```
+
+```react
+return React.createElement(
+	'div',
+    {},
+    React.createElement('h2', {}, "Let's get started!"),
+    React.createElement(Expenses, {items: expenses})
+);
+```
+
+
 
 명령형 접근 방식
 
@@ -94,5 +104,127 @@ const app = document.createElement('div');
 const heading = document.createElement('h2');
 heading.textContent = "Let's get started!";
 app.append(heading);
+```
+
+## 컴포넌트
+
+### 컴포넌트 만들고 export하기
+
+- return은 하나의 요소로만 감싸주기
+
+```react
+function ExpenseItem() {
+    return (
+        <h2>Expense Item</h2>
+    );
+}
+
+export default ExpenseItem;
+```
+
+### import해서 사용하기
+
+```react
+import ExpenseItem from "./component/ExpenseItem";
+
+function App() {
+  return (
+    <ExpenseItem></ExpenseItem>
+  );
+}
+
+export default App;
+```
+
+### css import하기
+
+```react
+import './ExpenseItem.css';
+```
+
+### className 붙여주기
+
+```react
+<div className="expense-item">
+    <div>2023-07-10</div>
+    <div className="expense-item__description">
+        <h2>Car Insurance</h2>
+        <div className="expense-item__price">$294.16</div>
+    </div>
+</div>
+```
+
+### 동적 데이터 바인딩
+
+```react
+const expenseTitle = 'Car Insurance';
+
+<h2>{expenseTitle}</h2>
+```
+
+### props
+
+- App.js에서 데이터를 각 컴포넌트에 전달해주기
+
+```react
+<ExpenseItem title={expenses[0].title} amount={expenses[0].amount} date={expenses[0].date}></ExpenseItem>
+
+function ExpenseItem(props) {
+    return (
+        <div className="expense-item">
+            <div>{props.date.toISOString()}</div>
+            <div className="expense-item__description">
+                <h2>{props.title}</h2>
+                <div className="expense-item__price">${props.amount}</div>
+            </div>
+        </div>
+    );
+}
+```
+
+### 컴포넌트 나누기
+
+```react
+<ExpenseDate date={props.date} />
+
+function ExpenseDate(props) {
+    const year = props.date.getFullYear();
+    const month = props.date.toLocaleString('ko-KR', {month: 'long'});
+    const day = props.date.toLocaleString('ko-KR', {day: '2-digit'});
+
+    return (
+        <div>
+            <div>{year}</div>
+            <div>{month}</div>
+            <div>{day}</div>    
+        </div>
+    );
+}
+```
+
+### 컴포지션
+
+Card라는 래퍼 컴포넌트는 return값의 최상위 요소로 쓸 수 없음
+
+- props.children으로 Card 안에 작성된 요소들을 끌고옴
+- Card의 하위 요소들의 클래스들을 모두 적용할 수 있어야 함
+
+```react
+function Card(props) {
+    const classes = 'card ' + props.className;
+    return <div className={classes}>{props.children}</div>
+}
+
+function ExpenseItem(props) {
+    return (
+        <Card className="expense-item">
+            <ExpenseDate date={props.date} />
+            <div className="expense-item__description">
+                <h2>{props.title}</h2>
+                <div className="expense-item__price">${props.amount}</div>
+            </div>
+        </Card>
+    );
+}
 ```
 
