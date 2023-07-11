@@ -76,8 +76,6 @@ function Expenses(props) {
 }
 ```
 
-## Form
-
 개별적인 state로 관리하기
 
 ```react
@@ -186,8 +184,6 @@ const NewExpense = () => {
 ```
 
 자식
-
-- 부모한테 props로 받은 함수를 수행
 
 ```react
 const submitHandler = (event) => {
