@@ -228,3 +228,11 @@ function ExpenseItem(props) {
 }
 ```
 
+컴포넌트에 화살표함수 써도됨
+
+```react
+const App = () => {
+    return <h2>Hello</h2>;
+}
+```
+
