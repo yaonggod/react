@@ -59,3 +59,56 @@ const filteredExpenses = props.items.filter(expense => {
 ))}
 ```
 
+## 조건부 렌더링
+
+삼항연산
+
+```react
+{filteredExpenses.length === 0 ? 
+(<p>no expenses found</p>) :
+(
+    filteredExpenses.map((expense) => (
+        <ExpenseItem
+            key={expense.id}
+            title={expense.title}
+            amount={expense.amount}
+            date={expense.date}
+        />
+    ))
+)}
+```
+
+조건에 맞으면 렌더링
+
+```react
+{filteredExpenses.length === 0 && <p>no expenses found</p>}
+```
+
+JSX를 변수로 저장하기
+
+```react
+let expensesContent = <p>no expenses found</p>
+
+if (filteredExpenses.length > 0) {
+    expensesContent = filteredExpenses.map((expense) => (
+                            <ExpenseItem
+                                key={expense.id}
+                                title={expense.title}
+                                amount={expense.amount}
+                                date={expense.date}
+                            />
+                        ))
+}
+
+return {expensesContent};
+```
+
+## 동적 스타일
+
+```react
+let barHeight = Math.round((props.value / props.maxValue) * 100) + '%';
+
+<div className='chart-bar__fill' style={{height: barHeight}}></div>
+```
+
+스타일은 컴포넌트 제한이 아닌 전역적으로 설정된 상태.
