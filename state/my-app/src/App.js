@@ -10,7 +10,7 @@ const App = () => {
   ]
   
   const addExpenseHandler = expense => {
-    console.log(expense);
+    expenses.push(expense);
   }
 
   return (

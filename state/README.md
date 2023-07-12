@@ -36,6 +36,8 @@ function ExpenseItem(props) {
 
 ## State
 
+**state가 변해야 컴포넌트를 다시 불러옴 (DOM을 재평가함)**
+
 ```react
 import {useState} from 'react';
 
@@ -155,16 +157,13 @@ const Form = () => {
 
 ## 부모, 자식 컴포넌트 통신
 
-props - 부모 -> 자식
+부모 <-> 자식, 자식 <-> 자식은 불가능...
 
-자식 -> 부모?
-
-부모
-
-- props로 onSaveExpenseData를 보냄
-
+- 부모가 props로 onSaveExpenseData를 보냄
 - 자식에서 props로 받은 onSaveExpenseData를 수행해서 매개변수를 보냄
 - 이 변수(enteredExpenseData)를 가지고 saveExpenseDataHandler를 실행해줘
+
+부모
 
 ```react
 const NewExpense = () => {
@@ -201,5 +200,6 @@ const submitHandler = (event) => {
 };
 ```
 
+stateful(smart) 컴포넌트 : state 관리
 
-
+stateless(dumb) 컴포넌트 : props로 받은 데이터만 보여주거나 정적 요소만 보여줌
