@@ -10,4 +10,10 @@
 
 [스타일](/style)
 
+[디버깅](/debugging)
+
+[fragments, portals, refs](/fpr)
+
+[effects, reducers, context](/erc)
+
 [http](/http)
