@@ -159,9 +159,113 @@ useEffect(() => {
 }, [emailIsValid, passwordIsValid])
 ```
 
-
-
-
-
 ## Context
+
+state를 여러 컴포넌트를 거쳐서 목적 컴포넌트로 보내는 경우
+-> 부모 컴포넌트를 거치지 않고 리액트 전체 state로 관리 
+
+### Context
+
+```react
+import React from "react";
+
+// 디폴트 객체 : 사용할 원소들을 형태 맞춰서 다 넣어주는게 좋음 -> 자동완성
+const AuthContext = React.createContext({
+    isLoggedIn: false,
+    onLogout: () => {},
+});
+
+export default AuthContext;
+```
+
+Provider : 전달할 값을 value에 넣고 context가 적용될 범위를 감싸기 
+-> MainHeader, Main이 context에 접근 가능, 자식 컴포넌트로 내려갈 때마다 props로 전달할 필요X
+
+```react
+import AuthContext from './store/auth-context';
+
+return (
+    <AuthContext.Provider value={{isLoggedIn: isLoggedIn}}>
+      <MainHeader onLogout={logoutHandler} />
+      <main>
+        {!isLoggedIn && <Login onLogin={loginHandler} />}
+        {isLoggedIn && <Home onLogout={logoutHandler} />}
+      </main>
+    </AuthContext.Provider> 
+  );
+```
+
+Consumer : 자식 컴포넌트가 받아서 활용
+
+```react
+<AuthContext.Consumer>
+  {(context) => {
+    return (
+        {context.isLoggedIn && <a href="/">Users</a>}
+    )}
+</AuthContext.Consumer>
+```
+
+`useContext`
+
+```react
+import { useContext } from 'react';
+
+const context = useContext(AuthContext);
+return (
+  {context.isLoggedIn && <a href="/">Users</a>}
+)
+```
+
+context에서 state를 관리하고, App은 JSX를 렌더링하는데 집중하기
+-> AuthContextProvider Wrapper를 export해서 사용, ACP로 App을 감싸기
+-> context를 import한 컴포넌트에서 context를 사용하던가 바꾸던가 하기
+
+```react
+import React, { useState, useEffect } from "react";
+
+const AuthContext = React.createContext({
+    isLoggedIn: false,
+    onLogout: () => {},
+    onLogin: (email, password) => {},
+});
+
+export const AuthContextProvider = (props) => {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const logoutHandler = () => {
+        setIsLoggedIn(false);
+    }
+    const loginHandler = () => {
+        setIsLoggedIn(true);
+    }
+
+    useEffect(() => {
+        const loginState = localStorage.getItem('isLoggedIn');
+        if (loginState === '1') {
+          setIsLoggedIn(true);
+        }
+    }, []);
+	
+    return (
+        <AuthContext.Provider value={{
+            isLoggedIn: isLoggedIn,
+            onLogout: logoutHandler,
+            onLogin: loginHandler
+        }}>{props.children}</AuthContext.Provider>
+    )
+}
+
+export default AuthContext;
+```
+
+```react
+import { AuthContextProvider } from './store/auth-context';
+
+root.render(<AuthContextProvider><App /></AuthContextProvider>);
+```
+
+Button과 같이 전체 app에서 적용되는 UI같은 컴포넌트는 context로 관리하면 전역적으로 적용
+-> props가 더 적합
+
+변경이 잦은 경우에는 context가 적합하지 않음
 
