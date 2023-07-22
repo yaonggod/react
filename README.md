@@ -16,4 +16,9 @@
 
 [effects, reducers, context](/erc)
 
+[최적화](/bts)
+
+[클래스 컴포넌트](/class)
+
 [http](/http)
+

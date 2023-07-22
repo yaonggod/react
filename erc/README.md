@@ -269,3 +269,57 @@ Button과 같이 전체 app에서 적용되는 UI같은 컴포넌트는 context�
 
 변경이 잦은 경우에는 context가 적합하지 않음
 
+## Hooks
+
+- 리액트 훅은 리액트 함수 내에서만 사용, 일반 함수 내에서 X
+
+- 중첩 함수(callback)나 블록 내(if, while)에서 호출 X , 최상위 수준에서만 호출 
+
+- useEffect는 참조하는 모든 것들을 의존성에 추가 
+
+```react
+useEffect(() => {
+    setFormIsValid(
+      enteredEmail.includes('@') && enteredPassword.trim().length > 6
+    )
+  }, [enteredEmail, enteredPassword])
+```
+
+예외: useEffect나 useReducer에 의해 노출된 state 업데이트 함수는 react가 변하지 않음을 보장
+-> dependency에 추가하지 않아도 됨
+
+## useRef
+
+특정 DOM을 선택해줌
+
+react는 ref 사용 권장 X
+
+```react
+import { useRef } from 'react';
+
+const emailInputRef = useRef();
+emailInputRef.current.focus();
+
+return <Input ref={emailInputRef}></Input>
+```
+
+## useImperativeHandle
+
+ref를 사용할 때 부모 컴포넌트로 특정 값을 객체로 보냄
+
+```react
+import React, { useRef, useImperativeHandle } from 'react';
+
+// Input 컴포넌트에서 focus일 경우 activate하라고 부모에게 알려줌
+const Input = React.forwardRef((props, ref) => {
+    const activate = () => {};
+    useImperativeHandle(ref, () => {
+        return {focus: activate};
+    })
+})
+
+// 부모 컴포넌트에서 Input컴포넌트의 ref에다가 focus(== activate)함
+const emailInputRef = useRef();
+emailInputRef.current.focus();
+```
+
