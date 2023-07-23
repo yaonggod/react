@@ -119,3 +119,15 @@ useEffect(() => { fetchMovies(); }, [fetchMovies]);
 const fetchMovies = useCallback(async () => {}, [])
 ```
 
+## POST
+
+```react
+const response = await fetch('', {
+  method: 'POST',
+  body: JSON.stringify(movie),
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+```
+
