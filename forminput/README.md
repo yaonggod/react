@@ -37,34 +37,152 @@ setEnteredName('');
 
 ## 유효성 검증하기
 
-state로 isValid 상태에 따라서 class나 DOM 토글하기 
+### 제출
 
 ```react
+// 입력값이 valid한지 판별하는 state
 const [enteredNameIsValid, setEnteredNameIsValid] = useState(false);
 
-if (enteredName.trim() === '') {
-  setEnteredNameIsValid(false);
-  return
+const formSubmitHandler = event => {
+    event.preventDefault();
+    
+    // 입력값이 공백일 때
+    if (enteredName.trim() === '') {
+        setEnteredNameIsValid(false);
+        return;
+    }
+    
+    // 유효성 검사를 통과했을때
+    setEnteredNameIsValid(true);
+    
 }
 
-setEnteredNameIsValid(true);
+<form onSubmit={formSubmitHandler}></form>
 ```
 
-제출한 적이 없다 => 경고X
+- 입력을 시도한 적이 없음 === valid하지도 invalid하지도 않음
 
-제출하거나 변한 이력이 있다 && 그런데 결과가 invalid했다 => 경고
+- 입력을 시도했고, 유효함 === valid
 
-제출하거나 변한 이력이 있다 && valid했다 => 경고X
+- 입력을 시도했으나 유효하지 않음 === invalid
+
+=> invalid한 상태만 골라서 form에 보여주기
 
 ```react
+// 입력값이 valid한지 판별하는 state
+const [enteredNameIsValid, setEnteredNameIsValid] = useState(false);
+// 입력 시도가 있었는지 판별하는 state
 const [enteredNameTouched, setEnteredNameTouched] = useState(false);
 
-const nameInputIsInValid = !enteredNameIsValid && enteredNameTouched;
+const formSubmitHandler = event => {
+    event.preventDefault();
+    
+    // 폼을 제출했음 === 입력을 시도했음
+    setEnteredNameTouched(true);
+    
+    // 입력값이 공백일 때
+    if (enteredName.trim() === '') {
+        setEnteredNameIsValid(false);
+        return;
+    }
+    
+    // 유효성 검사를 통과했을 때
+    setEnteredNameIsValid(true);
+    
+    // 진짜 최종 valid 판별 변수
+    const nameInputIsInValid = !enteredNameIsValid && enteredNameTouched;
+    // 결과에 따라서 valid, invalid 클래스 동적으로 변화
+    const nameInputClasses = nameInputIsInValid 
+      ? 'form-control invalid' 
+      : 'form-control'
+}
+
+<form onSubmit={formSubmitHandler}>
+	<div className={nameInputClasses}></div>
+</form>
 ```
 
-포커스가 변했을 때(블러)
+### 포커스를 잃음
+
+=== 포커스를 했다가 포커스를 잃음 === 입력을 시도한 적이 있음
 
 ```react
-<input type='text' id='name' onBlur={nameInputBlurHandler} />
+const nameInputBlurHandler = event => {
+    
+    // 입력을 시도한 적이 있음
+    setEnteredNameTouched(true);
+    
+    // 유효성 검사 통과X
+    if (enteredName.trim() === '') {
+      setEnteredNameIsValid(false);
+      return
+    }
+}
+
+<input onBlur={nameInputBlurHandler}/>
+```
+
+### 입력이 변함
+
+```react
+const nameInputChangeHandler = event => {
+    setEnteredName(event.target.value);
+    
+    // enteredName을 set해도 리액트에서 비동기적으로 처리하므로 enteredName하고 event.target.value가 다를 수 있음
+    if (event.target.value.trim() !== '') {
+      setEnteredNameIsValid(true);
+    }
+}
+```
+
+### 간소화
+
+valid 변수들을 state로 관리하지 않고 enteredName과 touched의 변화에 따라 변하게 
+
+```react
+const [enteredName, setEnteredName] = useState('');
+const [enteredNameTouched, setEnteredNameTouched] = useState(false);
+
+const enteredNameIsValid = enteredName.trim() !== '';
+const nameInputIsInValid = !enteredNameIsValid && enteredNameTouched;
+
+// nameInput state 관리
+const nameInputChangeHandler = event => {
+	setEnteredName(event.target.value);
+}
+
+const nameInputBlurHandler = event => {
+	setEnteredNameTouched(true);
+}
+
+const formSubmitHandler = event => {
+    event.preventDefault();
+
+    setEnteredNameTouched(true);
+
+    if (!enteredNameIsValid) {
+      return;
+    }
+
+    // 유효성 검증 통과 후 form 초기화
+    // input value 초기화
+    setEnteredName('');
+    // touched 초기화
+    setEnteredNameTouched(false);
+}
+```
+
+## form 여러개
+
+전체 input에 대해 유효성 검사
+
+```react
+let formIsValid = false;
+
+if (enteredNameIsValid && ...) {
+	formIsValid = true;
+}
+
+<button disabled={!formIsValid}></button>
 ```
 
