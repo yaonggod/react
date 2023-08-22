@@ -186,3 +186,87 @@ if (enteredNameIsValid && ...) {
 <button disabled={!formIsValid}></button>
 ```
 
+input 유효성 검사를 커스텀 훅으로 일반화하기
+
+```react
+import { useState } from 'react'
+
+// 유효성 조건을 validateValue라는 prop으로 전달
+const useInput = (validateValue) => {
+    const [enteredValue, setEnteredValue] = useState('');
+    const [isTouched, setIsTouched] = useState(false);
+
+    const valueIsValid = validateValue(enteredValue);
+    const hasError = !valueIsValid && isTouched; 
+
+    const valueChangeHandler = event => {
+        setEnteredValue(event.target.value);
+    }
+
+    const inputBlurHandler = event => {
+        setIsTouched(true);
+    }
+
+    const reset = () => {
+        setEnteredValue('');
+        setIsTouched(false);
+    }
+
+    return { 
+        value: enteredValue,
+        isValid: valueIsValid,
+        hasError,
+        valueChangeHandler,
+        inputBlurHandler,
+        reset,
+    }
+}
+
+export default useInput;
+```
+
+```react
+const { value: enteredName, 
+    isValid: enteredNameIsValid,
+    hasError: nameInputHasError, 
+    valueChangeHandler: nameChangeHandler, 
+    inputBlurHandler: nameBlurHandler,
+    reset: resetNameInput,
+} = useInput(value => value.trim() !== '');
+```
+
+`useReducer` 
+
+```react
+const initialInputState = {
+    value: '', isTouched: false,
+}
+
+const inputStateReducer = (state, action) {
+    if (action.type === 'INPUT') {
+        return { value: action.value, isTouched: state.isTouched };
+    } 
+    if (action.type === 'BLUR') {
+        return { value: state.value, isTouched: true };
+    }
+    if (action.type === 'RESET') {
+        return initialInputState;
+    }
+}
+```
+
+```react
+const [inputState, dispatch] = useReducer(inputStateReducer, initialInputState);
+
+const valueChangeHandler = (event) => {
+    dispatch({ type: 'INPUT', value: event.target.value})
+}
+
+const inputBlurHandler = (event) => {
+    dispatch({ type: 'BLUR' })
+}
+
+const reset = () => {
+    dispatch({ type: 'RESET'})
+}
+```
