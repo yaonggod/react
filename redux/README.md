@@ -136,8 +136,6 @@ if (action.type === 'toggle') {
 // OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 ```
 
-
-
 ### 클래스형 컴포넌트
 
 ```react
@@ -205,7 +203,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = { counter: 0, showCounter: true };
 
-createSlice({
+const counterSlice = createSlice({
     name: 'counter',
     initialState,
     reducers: {
@@ -226,5 +224,45 @@ createSlice({
     }
 });
 
+const store = createStore(counterSlice.reducer);
+export default store;
 ```
 
+action 생성자: action 객체를 생성 
+
+```react
+export const counterActions = counterSlice.actions;
+export default store;
+```
+
+```react
+import { counterActions } from '../store/index';
+const incrementHandler = () => {
+    dispatch(counterActions.increment());
+};
+const increaseHandler = () => {
+    // action객체 생성, 기본으로 type이 들어가고 필요하면 payload가 들어감
+	dispatch(counterActions.increase(5)) 
+}
+```
+
+여러 개의 상태 slice 사용하기
+
+```react
+import { configureStore } from '@reduxjs/toolkit';
+
+// reducer객체로 slice의 reducer 매칭하기
+const store = configureStore({
+    reducer: { counter: counterSlice.reducer, auth: authSlice.reducer }
+});
+   
+export default store;
+```
+
+```react
+// 각각의 reducer에 접근하기
+const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+const counter = useSelector(state => state.counter.counter);
+```
+
+=> slice들을 별도의 js 파일로 만들어서 import해와서 하나의 store로 합쳐서 내보내기  
