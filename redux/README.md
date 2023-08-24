@@ -11,6 +11,7 @@
 ```bash
 npm install redux
 npm install redux react-redux
+npm install @reduxjs/toolkit
 ```
 
 ## context 말고 redux가 필요한 이유
@@ -266,3 +267,12 @@ const counter = useSelector(state => state.counter.counter);
 ```
 
 => slice들을 별도의 js 파일로 만들어서 import해와서 하나의 store로 합쳐서 내보내기  
+
+## Redux와 비동기
+
+- reducer는 순수 함수이고, side-effect free하고, 동기적임
+  === 같은 인풋을 넣었으면 아웃풋도 같아야함
+- 그러면 http요청처럼 부수 효과가 수반되고 비동기적인 작업은 어디에다가 배치해야함?
+  -  `useEffect()` 로 컴포넌트에서 처리하고 결과물을 redux에 전달하거나 
+  - 새로운 `action creator`를 만들거나 
+
