@@ -5,14 +5,14 @@ import { useDispatch } from 'react-redux'
 import { cartActions } from '../../store/cart-slice';
 
 const CartItem = (props) => {
-  const { title, quantity, total, price } = props.item;
+  const { title, quantity, total, price, id } = props.item;
 
   const dispatch = useDispatch();
-  const minusItem = () => {
-    dispatch(cartActions.minusItem());
-  }
   const plusItem = () => {
-    dispatch(cartActions.plusItem())
+    dispatch(cartActions.addItemToCart(props.item));
+  }
+  const minusItem = () => {
+    dispatch(cartActions.removeItemFromCart(props.item))
   }
 
   return (
